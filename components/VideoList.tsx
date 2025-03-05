@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { Video } from "@/server/db/schema";
 import { Button } from "@/components/ui/button";
-// import { scrapeVideos } from "@/server/youtube-actions";
+import { scrapeVideos } from "@/server/youtube-actions";
 import { toast } from "sonner"
 import { formatCount } from "@/lib/utils";
 import { Loader2, TvMinimal } from "lucide-react";
@@ -22,10 +22,11 @@ export default function VideoList({
   const handleScrape = async () => {
     setIsScraping(true);
     try {
-    //   const newVideos = [] // TODO: await scrapeVideos();
-    //   setVideos((prevVideos) => [...newVideos, ...prevVideos]);
+      const newVideos = await scrapeVideos();
+      console.log(`New videos scrapping`, newVideos);
+      setVideos((prevVideos) => [...newVideos, ...prevVideos]);
       toast("Scrape Successful", {
-        // description: `Scraped ${newVideos.length} new videos`,
+        description: `Scraped ${newVideos.length} new videos`,
       });
     } catch (error) {
       console.error("Error scraping videos:", error);
