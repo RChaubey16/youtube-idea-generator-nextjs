@@ -1,8 +1,8 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { eq, and } from "drizzle-orm";
-import { Video, VideoComments, Videos, YouTubeChannels, YouTubeChannelType } from "./db/schema";
+import { eq, and, desc } from "drizzle-orm";
+import { Idea, Ideas, Video, VideoComments, Videos, YouTubeChannels, YouTubeChannelType } from "./db/schema";
 import { db } from "./db/drizzle";
 
 export const getVideosForUser = async (): Promise<Video[]> => {
@@ -58,4 +58,18 @@ export const getVideoWithComments = async (
     .orderBy(VideoComments.publishedAt);
 
   return { video, comments };
+};
+
+export const getIdeasForUser = async (): Promise<Idea[]> => {
+  const { userId } = await auth();
+
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  return db
+    .select()
+    .from(Ideas)
+    .where(eq(Ideas.userId, userId))
+    .orderBy(desc(Ideas.createdAt));
 };
